@@ -1,39 +1,26 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Loading...</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Redirecting...</title>
+  <style>
+    html, body { margin:0; padding:0; height:100%; background:#fff; }
+  </style>
   <script>
-    async function redirect() {
+    (function () {
+      const TARGET_URL = "https://s.url99.me/9znb3oux"; // ← 换成你的目标链接
       try {
-        const res = await fetch("mapping.json?ts=" + Date.now()); // 加随机参数避免缓存
-        const data = await res.json();
-        const activeLinks = data.links.filter(l => l.active);
-
-        if (activeLinks.length === 0) {
-          return; // 没有可用链接则停留
-        }
-
-        // 按权重抽签
-        const weighted = [];
-        activeLinks.forEach(l => {
-          for (let i = 0; i < (l.weight || 1); i++) {
-            weighted.push(l.url);
-          }
-        });
-        const targetUrl = weighted[Math.floor(Math.random() * weighted.length)];
-
-        // 立即跳转
-        window.location.replace(targetUrl);
+        location.replace(TARGET_URL); // 秒跳转，不保留历史
       } catch (e) {
-        console.error("跳转失败", e);
+        location.href = TARGET_URL; // 兜底
       }
-    }
-
-    redirect();
+    })();
   </script>
+  <noscript>
+    <meta http-equiv="refresh" content="0; url=https://example.com" />
+  </noscript>
 </head>
-<body>
-</body>
+<body></body>
 </html>
